@@ -1,29 +1,13 @@
 PHP Vulnerability Tracer
 ------------------------
 
-1. Unpack the tarball: tar -xzf pvt-0.1.x.tgz.  Note that you do
-not need to unpack the tarball inside the PHP source code tree.
-PVT is compiled separately, all by itself, as stated above.
+This extension was developed to assist in PHP web-application security
+evaluation. PVT consists of several separate modules, each of them executing
+different tasks:
+    - tracing functions and draw CFG
+    - dump opcodes
+    - dump variables
+    - hook string eval's
+    - watch function arguments
 
-2. cd pvt-0.1.x
-
-3. Run phpize: phpize
-   (or /path/to/phpize if phpize is not in your path).
-
-4. ./configure
-
-5. Run: make
-
-6. cp modules/pvt.so /to/wherever/you/want/it
-
-7. add the following line to php.ini:
-   zend_extension="/wherever/you/put/it/pvt.so"
-
-8. Restart your webserver.
-
-
-USAGE
------
-
-For usage see documentation.
-
+PVT currently tested on Linux, PHP 5.3.

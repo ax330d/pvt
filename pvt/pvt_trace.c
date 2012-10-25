@@ -53,7 +53,11 @@ static char *tpl_dot[1] = {
     overlap = false;\n"
 };
 
-/* 1-point name,2-var name, 3-var name, 4-value */
+/* 1-point name,
+ * 2-var name,
+ * 3-var name,
+ * 4-value
+ **/
 static char *tpl_point_func[3] = {
     /* For block/node start */
     "\"node_%d\"[\
@@ -74,9 +78,9 @@ static char *tpl_relation_func[1] = {
 };
 
 /*
- * TODO: 
- *  move to *.ini config, 
- *  move to reparate groups,
+ * TODO:
+ *  move to *.ini config,
+ *  move to separate groups,
  *  add parameter checks
  */
 static char *dangerous[DF_LEN] = {
@@ -105,11 +109,11 @@ static int is_dangerous(const char *function_name)
     int i, z;
 
     for (i = 0; i < DF_LEN; i++) {
-        
+
         pvt_arg *parts = (pvt_arg*) malloc(sizeof(pvt_arg));
         pvt_arg_init(parts);
         pvt_explode(",", dangerous[i], parts, -1);
-        
+
         for (z = 0; z < parts->c; ++z) {
             char *varn = parts->args[z];
             if (0 == strcasecmp(varn, function_name)) {
@@ -142,45 +146,44 @@ static int is_func_dyn(const char *function_name)
     pvt_arg_dtor(parts);
 
     return 0;
-
 }
 
-/* 
+/*
  * Hides function repetitions in graph
  */
 static void hide_functions(void)
 {
     TSRMLS_FETCH();
-    
+
     int k = 0, i = 0;
-    
+
     for (k; k < PVT_G(funcs)->len; k++) {
-        
+
         int index   = PVT_G(funcs)->func_id[k];
         int file_id = PVT_G(funcs)->file_id[k];
-        
+
         if (0 == k || k == PVT_G(funcs)->len) continue;
-        
+
         int i = k - 1;
         for (i; i > 0; i--) {
-            
+
             /* If there is a match with some previous item */
-            if (PVT_G(funcs)->func_id[i] == index 
-                && PVT_G(funcs)->file_id[i] == file_id) 
+            if (PVT_G(funcs)->func_id[i] == index
+                && PVT_G(funcs)->file_id[i] == file_id)
             {
-                
+
                 int dist = k - i;
                 int g = i;
-                
+
                 /* This is a temporary rude hack, rarely but it tends to loop.
                  * Thus, I limit maximal amount of functions in block to 29.
                  */
                 if (dist > 30) continue;
-                
+
                 /* Drop to the very first block */
                 for (g; g < PVT_G(funcs)->len; ) {
                     int e = 0, m = 0;
-                    
+
                     /* Start cycling by blocks */
                     for (e; e < dist; e++) {
                         if ((g + dist + e) >= PVT_G(funcs)->len) {
@@ -188,9 +191,9 @@ static void hide_functions(void)
                         }
                         if (PVT_G(funcs)->func_id[g+e] == PVT_G(funcs)->func_id[g+dist+e]) {
                             m++;
-                        }   
+                        }
                     }
-                    
+
                     if (m == dist) {
                         g += dist;
                         int q = 0;
@@ -217,9 +220,9 @@ void dump_dot(void)
     char *block_name = NULL;
     char *time_buff = pvt_get_time();
     smart_str str_dot_func = {0};
-    
+
     TSRMLS_FETCH();
-    
+
     char *tmp_buff = NULL;
     tmp_buff = pvt_sprintf(tpl_dot[0], time_buff);
     fprintf(PVT_G(trace_file_f_dot), "%s", tmp_buff);
@@ -231,10 +234,10 @@ void dump_dot(void)
     }
 
     /* Iterate through all blocks/nodes */
-    for (zend_hash_internal_pointer_reset(PVT_G(block_summary)); 
-        zend_hash_has_more_elements(PVT_G(block_summary)) == SUCCESS; 
+    for (zend_hash_internal_pointer_reset(PVT_G(block_summary));
+        zend_hash_has_more_elements(PVT_G(block_summary)) == SUCCESS;
         zend_hash_move_forward(PVT_G(block_summary))) {
-        
+
         key_type = zend_hash_get_current_key(PVT_G(block_summary), &block_name, &index, 0);
         if (key_type == HASH_KEY_IS_STRING) {
             key_len = strlen(block_name);
@@ -242,42 +245,42 @@ void dump_dot(void)
         zend_hash_get_current_data(PVT_G(block_summary), (void*) &block_num);
 
         print_header = 1;
-        
+
         int flag_started = 0;
         int flag_break   = 0;
         int flag_nop     = 0;
         flag_ho = 1;
-        
+
         size_t ret_len;
 
         /* Iterate through all functions */
         for (x = 0; x < PVT_G(funcs)->len; x++) {
-            
+
             if (PVT_G(funcs)->file_id[x] == *block_num) {
-                
+
                 flag_started = 1;
                 if (print_header) {
                     if (PVT_G(funcs)->type[x] == 2 && flag_ho) {
-                        
+
                         char *ret;
                         php_basename(
-                            PVT_G(funcs)->file_name[x], 
-                            strlen(PVT_G(funcs)->file_name[x]), 
+                            PVT_G(funcs)->file_name[x],
+                            strlen(PVT_G(funcs)->file_name[x]),
                             NULL, 0, &ret, &ret_len TSRMLS_CC
                         );
                         char *escaped_str = php_escape_html_entities(
-                            block_name, 
-                            strlen(block_name), 
+                            block_name,
+                            strlen(block_name),
                             &len, 0, ENT_QUOTES, NULL TSRMLS_CC
                         );
                         /* Print the block header */
-                        fprintf(PVT_G(trace_file_f_dot), 
-                            tpl_point_func[0], 
-                            *block_num, 
-                            PVT_G(funcs)->line[x], 
+                        fprintf(PVT_G(trace_file_f_dot),
+                            tpl_point_func[0],
+                            *block_num,
+                            PVT_G(funcs)->line[x],
                             *block_num,
                             PVT_G(funcs)->file_name[x], PVT_G(funcs)->line[x],
-                            ret, 
+                            ret,
                             escaped_str,
                             PVT_G(funcs)->func_id[x]
                         );
@@ -299,7 +302,7 @@ void dump_dot(void)
             if (0 == flag_started) {
                 continue;
             }
-            
+
             if ((PVT_G(funcs)->stack[x]-1) != PVT_G(dot_funcs_i)->file_id[c]) {
                 if (!flag_break) {
                     continue;
@@ -307,7 +310,7 @@ void dump_dot(void)
                     flag_nop = 1;
                 }
             }
-            
+
             if (flag_nop != 1) {
                 flag_nop = 0;
                 if (print_header) {
@@ -318,63 +321,63 @@ void dump_dot(void)
                     flag_started = 0;
                     break;
                 }
-                
+
                 /* Check if function repeats */
                 if (0 == PVT_G(funcs)->hide[x] || !PVT_G(pvt_graph_fold)) {
                     if (2 == PVT_G(funcs)->type[x]) {
-                    
+
                         /* This is USER function */
                         char *escaped_str = php_escape_html_entities(
-                            PVT_G(funcs)->func_name[x], 
-                            strlen(PVT_G(funcs)->func_name[x]), 
+                            PVT_G(funcs)->func_name[x],
+                            strlen(PVT_G(funcs)->func_name[x]),
                             &len, 0, ENT_QUOTES, NULL TSRMLS_CC
                         );
-                        
+
                         fprintf(PVT_G(trace_file_f_dot),
-                            tpl_point_func[1], 
-                            PVT_G(funcs)->line[x], 
-                            PVT_G(funcs)->line[x], 
+                            tpl_point_func[1],
+                            PVT_G(funcs)->line[x],
+                            PVT_G(funcs)->line[x],
                             escaped_str,
                             PVT_G(funcs)->func_id[x]
                         );
                         efree(escaped_str);
-                        
+
                         char *tmp_buff = pvt_sprintf(
-                            tpl_relation_func[0], 
+                            tpl_relation_func[0],
                             *block_num,
-                            PVT_G(funcs)->line[x], 
-                            PVT_G(funcs)->file_id[x], 
+                            PVT_G(funcs)->line[x],
+                            PVT_G(funcs)->file_id[x],
                             PVT_G(funcs)->file_id[x],
                             PVT_G(funcs)->func_id[x]
                         );
                         smart_str_appends(&str_dot_func, tmp_buff);
                         efree(tmp_buff);
-                        
+
                     } else {
                         /* This is ZEND function */
                         char *escaped_str = php_escape_html_entities(
-                            PVT_G(funcs)->func_name[x], 
-                            strlen(PVT_G(funcs)->func_name[x]), 
+                            PVT_G(funcs)->func_name[x],
+                            strlen(PVT_G(funcs)->func_name[x]),
                             &len, 0, ENT_QUOTES, NULL TSRMLS_CC
                         );
-                        
-                        fprintf(PVT_G(trace_file_f_dot), 
-                            tpl_point_func[2], 
-                            PVT_G(funcs)->line[x], 
+
+                        fprintf(PVT_G(trace_file_f_dot),
+                            tpl_point_func[2],
+                            PVT_G(funcs)->line[x],
                             (1 == PVT_G(funcs)->is_evil[x] ? "d63333" : "e0ebcc"),
                             escaped_str,
                             PVT_G(funcs)->func_id[x]
                         );
                         efree(escaped_str);
                     }
-                    
+
                 } /* end if (0 ==... */
             } /* end if (flag_nop... */
 
             if (flag_break) {
                 if (!flag_nop) {
                     flag_break   = 0;
-                    flag_started = 0; 
+                    flag_started = 0;
                     break;
                 }
             }
@@ -383,7 +386,6 @@ void dump_dot(void)
         fprintf(PVT_G(trace_file_f_dot), "</TABLE>>\n]\n");
     }
 
-    
     smart_str_0(&str_dot_func);
     if (str_dot_func.c != NULL) {
         fprintf(PVT_G(trace_file_f_dot), "%s", str_dot_func.c);
@@ -406,10 +408,9 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     int is_dynamic  = 0;
     int is_evil     = 0;
     char *fname = NULL;
-    
-    
+
     TSRMLS_FETCH();
-    
+
     if (PVT_G(pvt_count_stat)) {
         PVT_G(stats)->func_calls += 1;
     }
@@ -418,22 +419,22 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     is_evil = is_dangerous(func_name);
 
     /* Functions tracing */
-    
+
     if (zend_hash_find(PVT_G(file_summary), (char *) filename, strlen(filename) + 1, (void *) &filenum) == FAILURE) {
-    
+
         tmp_filenum = ++PVT_G(file_index);
-        
+
         fprintf(PVT_G(trace_file_f), " \t| #%d\t| \t%s %s()\n", tmp_filenum, filename, func_name);
-        
+
         zend_hash_add(PVT_G(file_summary), (char *) filename, strlen(filename) + 1, &(tmp_filenum), sizeof(int), NULL);
-        
+
         if (PVT_G(pvt_count_stat)) {
             PVT_G(stats)->file_amount += 1;
         }
     } else {
         tmp_filenum = *filenum;
     }
-    
+
 
     if (is_func_dyn(func_name)) {
         fname = (char *) pvt_sprintf("%s_%d", func_name, tmp_filenum);
@@ -444,21 +445,21 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     }
 
     /* Files tracing */
-    
+
     if (zend_hash_find(PVT_G(function_summary), (char *) fname, strlen(fname) + 1, (void *) &function_index) == SUCCESS) {
-        
+
         tmp_function_index = *function_index;
-        
+
         fprintf(PVT_G(trace_file_f), " %d\t| -->\t| %s() %s #%d {\n", linenum,  fname, filename, tmp_function_index);
         new_var = 0;
-        
+
     } else {
-    
+
         /* We enter in new function */
         tmp_function_index = ++PVT_G(function_index);
-        
+
         zend_hash_add(PVT_G(function_summary), (char *) fname, strlen(fname) + 1, &(tmp_function_index), sizeof(int), NULL);
-        
+
         fprintf(PVT_G(trace_file_f), " \t| #%d\t| %s() %d\n", tmp_function_index, fname, type);
         fprintf(PVT_G(trace_file_f), " %d\t| -->\t| %s() %s #%d .{\n", linenum,  fname, filename, tmp_function_index);
 
@@ -468,12 +469,12 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     }
 
     /* For *.dot graphs */
-    
+
     if (zend_hash_find(PVT_G(block_summary), (char *) fname, strlen(fname) + 1, (void *) &block_num) == FAILURE) {
-    
+
         /* Files and user functions */
         if (2 == type) {
-        
+
             tmp_block_num = ++PVT_G(block_index);
             zend_hash_add(PVT_G(block_summary), (char *) fname, strlen(fname) + 1, &(tmp_block_num), sizeof(int), NULL);
             flag_x = 1;
@@ -484,16 +485,16 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     }
 
     local_index += 1;
-    
+
     if (2 == type) {
-    
+
         PVT_G(funcs_stack)->func_id = realloc(PVT_G(funcs_stack)->func_id, (PVT_G(funcs_stack)->len+1) * sizeof(int));
         PVT_G(funcs_stack)->func_id[PVT_G(funcs_stack)->len] = tmp_block_num;
 
         PVT_G(funcs_stack)->len += 1;
         esp = PVT_G(funcs_stack)->func_id[PVT_G(funcs_stack)->len-1];
     } else {
-        /* In file or in function 
+        /* In file or in function
          * Note: here was a problem with finding esp with dynamic content, had
          * to add second check 'is_dynamic'. Find better fix?
          */
@@ -506,7 +507,7 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     }
 
     if (flag_x) {
-    
+
         PVT_G(dot_funcs_i)->file_id = realloc(PVT_G(dot_funcs_i)->file_id, (PVT_G(dot_funcs_i)->len+1) * sizeof(int));
         PVT_G(dot_funcs_i)->file_id[PVT_G(dot_funcs_i)->len] = PVT_G(funcs_stack)->i;
 
@@ -522,11 +523,11 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
         }
     }
 
-    
+
     /* Save variable and related block node number */
     PVT_G(funcs)->func_id = realloc(PVT_G(funcs)->func_id, (PVT_G(funcs)->len+1) * sizeof(int));
     PVT_G(funcs)->func_id[PVT_G(funcs)->len] = tmp_function_index;
-    
+
     PVT_G(funcs)->file_id = realloc(PVT_G(funcs)->file_id, (PVT_G(funcs)->len+1) * sizeof(int));
     PVT_G(funcs)->file_id[PVT_G(funcs)->len] = esp;
 
@@ -570,11 +571,10 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
             PVT_G(stats)->max_stack = PVT_G(funcs_stack)->i;
         }
     }
-    
+
     if (fname) {
         efree(fname);
-    }
-    
+
 }
 
 void trace_function_exit(char *func_name, char *filename, int type, int line)
@@ -583,9 +583,9 @@ void trace_function_exit(char *func_name, char *filename, int type, int line)
     int *filenum;
     int tmp_func_index;
     char *fname;
-    
+
     TSRMLS_FETCH();
-    
+
     if (zend_hash_find(PVT_G(file_summary), (char *) filename, strlen(filename) + 1, (void *) &filenum) == FAILURE) {
         /* Do nothing */
     }
@@ -598,15 +598,15 @@ void trace_function_exit(char *func_name, char *filename, int type, int line)
     }
 
     if (zend_hash_find(PVT_G(function_summary), fname, strlen(fname) + 1, (void *) &function_index) == SUCCESS) {
-        
+
         tmp_func_index = *function_index;
         fprintf(PVT_G(trace_file_f), " %d\t| <--\t| %s() %s #%d }\n\n", line, fname, filename, tmp_func_index);
-        
+
     } else {
-    
+
         tmp_func_index =  ++PVT_G(function_index);
         zend_hash_add(PVT_G(function_summary), fname, strlen(fname) + 1, &(tmp_func_index), sizeof(int), NULL);
-        
+
         fprintf(PVT_G(trace_file_f), " %d\t| <--\t| %s() %s #%d .}\n\n", line, fname, filename, tmp_func_index);
     }
 
@@ -618,7 +618,7 @@ void trace_function_exit(char *func_name, char *filename, int type, int line)
             PVT_G(dot_funcs_i)->empty[PVT_G(dot_funcs_i)->len-1] = 1;
         }
     }
-    
+
     if (fname) {
         efree(fname);
     }
@@ -673,10 +673,10 @@ zval *debug_backtrace_get_args(void ***curpos TSRMLS_DC)
     return arg_array;
 }
 
-void pvt_trace_variables(void) 
+void pvt_trace_variables(void)
 {
     TSRMLS_FETCH();
-    
+
     int lineno;
     char *function_name;
     char *filename;
@@ -832,7 +832,7 @@ void pvt_trace_variables(void)
             get_and_dump_args(function_name, lineno, filename, &finfo, arg_array TSRMLS_CC);
             zval_ptr_dtor(&arg_array);
         }
-        
+
         if (!filename) {
             zend_execute_data *prev = skip->prev_execute_data;
 
@@ -855,5 +855,4 @@ void pvt_trace_variables(void)
             efree(free_class_name);
         }
     }
-    
 }

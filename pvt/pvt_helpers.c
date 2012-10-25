@@ -27,8 +27,9 @@ char *pvt_get_time(void)
 
     str_time = emalloc(24);
     cur_time = time(NULL);
-    
+
     strftime(str_time, 24, "%Y-%m-%d_%H:%M:%S", gmtime (&cur_time));
+
     return str_time;
 }
 
@@ -40,7 +41,7 @@ char *pvt_sprintf_real(const char* fmt, va_list args)
     va_list copy;
 #endif
     new_str = (char*) emalloc(size);
-    
+
     for (;;) {
         int n;
 #ifdef va_copy
@@ -60,7 +61,7 @@ char *pvt_sprintf_real(const char* fmt, va_list args)
         }
         new_str = (char*) erealloc(new_str, size);
     }
-    
+
     va_end(args);
 
     return new_str;
@@ -90,13 +91,13 @@ void pvt_fprintf(const char* fmt, ...)
 {
     va_list args;
     char* new_str;
-    
+
     TSRMLS_FETCH();
 
     va_start(args, fmt);
     new_str = pvt_sprintf_real(fmt, args);
     va_end(args);
-    
+
     if (PVT_G(trace_file_f)) {
         fprintf(PVT_G(trace_file_f), "%s", new_str);
     }
@@ -138,7 +139,7 @@ char *pvt_sprintf(char* fmt, ...)
 char *pvt_substr(int start, int end, char *source)
 {
     char *dest = NULL;
-    int i, x = 0;    
+    int i, x = 0;
 
     /* Yeah, not safe */
 
@@ -147,13 +148,13 @@ char *pvt_substr(int start, int end, char *source)
     }
 
     dest = estrdup(source);
-    
+
     if (start > -1) {
         for (i = start; i < end && source[i] != '\0'; i++, x++) {
             dest[x] = source[i];
-            
+
         }
-        dest[x] = '\0';  
+        dest[x] = '\0';
         return dest;
     }
 
@@ -168,7 +169,7 @@ char *pvt_memnstr(char *haystack, char *needle, int needle_len, char *end)
 
     /* let end point to the last character where needle may start */
     end -= needle_len;
-    
+
     while (p <= end) {
         while (*p != first) {
             if (++p > end) {
@@ -184,7 +185,7 @@ char *pvt_memnstr(char *haystack, char *needle, int needle_len, char *end)
     return NULL;
 }
 
-void pvt_explode(char *delim, char *str, pvt_arg *args, int limit) 
+void pvt_explode(char *delim, char *str, pvt_arg *args, int limit)
 {
     char *p1, *p2, *endp;
 
@@ -231,10 +232,10 @@ char *str_repeat(const char *input_str, int len)
 
     result_len = strlen(input_str) * len;
     result = (char *)safe_emalloc(strlen(input_str), len, 1);
-    
+
     /* Heavy optimization for situations where input string is 1 byte long */
     if (strlen(input_str) == 1) {
-        memset(result, *(input_str), len); 
+        memset(result, *(input_str), len);
     } else {
         char *s, *e, *ee;
         int l=0;
@@ -242,7 +243,7 @@ char *str_repeat(const char *input_str, int len)
         s = result;
         e = result + strlen(input_str);
         ee = result + result_len;
-        
+
         while (e<ee) {
             l = (e-s) < (ee-e) ? (e-s) : (ee-e);
             memmove(e, s, l);
@@ -258,7 +259,5 @@ void *pvt_normalize_str(char *input_str)
 {
     static char from[] = " \n\r";
     php_strtr(input_str, strlen(input_str), from, "_", strlen(input_str));
-    
-    //return input_str;
 }
 

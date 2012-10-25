@@ -154,9 +154,9 @@ static const op_usage opcodes[] = {
 #ifdef ZEND_ENGINE_2
     /*  107 */  { "ZEND_CATCH", ALL_USED | EXT_VAL },
     /*  108 */  { "ZEND_THROW", ALL_USED | EXT_VAL },
-    
+
     /*  109 */  { "ZEND_FETCH_CLASS", SPECIAL },
-    
+
     /*  110 */  { "ZEND_CLONE", ALL_USED },
 
 #if (PHP_MAJOR_VERSION < 5) || (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION <= 2)
@@ -166,17 +166,17 @@ static const op_usage opcodes[] = {
 #endif
     /*  112 */  { "ZEND_INIT_METHOD_CALL", ALL_USED },
     /*  113 */  { "ZEND_INIT_STATIC_METHOD_CALL", ALL_USED },
-    
+
     /*  114 */  { "ZEND_ISSET_ISEMPTY_VAR", ALL_USED | EXT_VAL },
     /*  115 */  { "ZEND_ISSET_ISEMPTY_DIM_OBJ", ALL_USED | EXT_VAL },
-    
+
     /*  116 */  { "ZEND_IMPORT_FUNCTION", ALL_USED },
     /*  117 */  { "ZEND_IMPORT_CLASS", ALL_USED },
     /*  118 */  { "ZEND_IMPORT_CONST", ALL_USED },
-    
+
     /*  119 */  { "119", ALL_USED },
     /*  120 */  { "120", ALL_USED },
-    
+
     /*  121 */  { "ZEND_ASSIGN_ADD_OBJ", ALL_USED },
     /*  122 */  { "ZEND_ASSIGN_SUB_OBJ", ALL_USED },
     /*  123 */  { "ZEND_ASSIGN_MUL_OBJ", ALL_USED },
@@ -196,17 +196,17 @@ static const op_usage opcodes[] = {
 
     /*  136 */  { "ZEND_ASSIGN_OBJ", ALL_USED },
     /*  137 */  { "ZEND_OP_DATA", ALL_USED },
-    
+
     /*  138 */  { "ZEND_INSTANCEOF", ALL_USED },
-    
+
     /*  139 */  { "ZEND_DECLARE_CLASS", ALL_USED },
     /*  140 */  { "ZEND_DECLARE_INHERITED_CLASS", ALL_USED },
     /*  141 */  { "ZEND_DECLARE_FUNCTION", ALL_USED },
-    
+
     /*  142 */  { "ZEND_RAISE_ABSTRACT_ERROR", ALL_USED },
-    
+
     /*  143 */  { "ZEND_START_NAMESPACE", ALL_USED },
-    
+
     /*  144 */  { "ZEND_ADD_INTERFACE", ALL_USED },
     /*  145 */  { "ZEND_VERIFY_INSTANCEOF", ALL_USED },
     /*  146 */  { "ZEND_VERIFY_ABSTRACT_CLASS", ALL_USED },
@@ -224,7 +224,7 @@ static const op_usage opcodes[] = {
  */
 void *format_zval(zval *z, zend_bool raw)
 {
-    switch (z->type) 
+    switch (z->type)
     {
         case IS_NULL:
             return pvt_sprintf("%s", "NULL");
@@ -252,7 +252,7 @@ void *format_zval(zval *z, zend_bool raw)
         default:
             return pvt_sprintf("%s", "Unknown");
     }
-    
+
     return;
 }
 /* {{{ */
@@ -263,12 +263,13 @@ void *format_znode(znode *n, zend_uint base_address)
 {
     char *tmp;
     char *buff = NULL;
-    
+
     switch (n->op_type) {
         case IS_UNUSED:
             return pvt_sprintf("%s", " ");
             break;
-        case IS_CONST: /* 1, Constant*/
+        /* 1, Constant */
+        case IS_CONST:
 #if PHP_VERSION_ID >= 50399
             tmp = format_zval(n->zv, 0);
 #else
@@ -278,13 +279,16 @@ void *format_znode(znode *n, zend_uint base_address)
             efree(tmp);
             return buff;
             break;
-        case IS_CV: /* 16, Compiled variable */
+        /* 16, Compiled variable */
+        case IS_CV:
             return pvt_sprintf("!%d", n->u.var);
             break;
-        case IS_VAR: /* 4, Variable*/
+        /* 4, Variable */
+        case IS_VAR:
             return pvt_sprintf("$%ld", n->u.var/sizeof(temp_variable));
             break;
-        case IS_TMP_VAR: /* 2, TMP variable */
+        /* 2, TMP variable */
+        case IS_TMP_VAR:
             return pvt_sprintf( "~%ld", n->u.var/sizeof(temp_variable));
             break;
         case PVT_IS_OPNUM:
@@ -322,9 +326,9 @@ static void dump_op(zend_op_array *op_array, zend_op *opi, int num, zend_uint ba
     char *op_result = NULL;
     char *op_op1 = NULL;
     char *op_op2 = NULL;
-    
+
     TSRMLS_FETCH();
-    
+
     /* EXT_STMT */
     if (opi->opcode == 101) {
         fprintf(PVT_G(log_file_path), "\t<tr class=\"s\">");
@@ -332,16 +336,14 @@ static void dump_op(zend_op_array *op_array, zend_op *opi, int num, zend_uint ba
         fprintf(PVT_G(log_file_path), "\t<tr>");
     }
 
-
-    fprintf(PVT_G(log_file_path), 
-        "<td>%d</td><td>%d</td><td title=\"%d\" class=\"wz\">%s</td>", 
+    fprintf(PVT_G(log_file_path),
+        "<td>%d</td><td>%d</td><td title=\"%d\" class=\"wz\">%s</td>",
         num, opi->lineno, opi->opcode, opname(opi->opcode)
     );
 
- 
-    if (!(opi->PVT_EXTENDED_VALUE(result) & EXT_TYPE_UNUSED)) {   
+    if (!(opi->PVT_EXTENDED_VALUE(result) & EXT_TYPE_UNUSED)) {
         op_result = format_znode(&opi->result, base_address);
-        fprintf(PVT_G(log_file_path), 
+        fprintf(PVT_G(log_file_path),
             "<td>%s</td>", op_result
         );
         if (op_result) {
@@ -351,25 +353,22 @@ static void dump_op(zend_op_array *op_array, zend_op *opi, int num, zend_uint ba
         fprintf(PVT_G(log_file_path), "<td></td>");
     }
 
-
     op_op1 = format_znode(&opi->op1, base_address);
-    fprintf(PVT_G(log_file_path), 
+    fprintf(PVT_G(log_file_path),
         "<td>%s</td>", op_op1
     );
-    
+
     if (op_op1) {
         efree(op_op1);
     }
-    
 
     op_op2 = format_znode(&opi->op2, base_address);
-    fprintf(PVT_G(log_file_path), 
+    fprintf(PVT_G(log_file_path),
         "<td>%s</td></tr>\n", op_op2
     );
     if (op_op2) {
         efree(op_op2);
     }
-    
 }
 /* }}} */
 
@@ -381,17 +380,16 @@ void dump_opcode(char *func_name, char *file_name, zend_op_array *op_array TSRML
     char *log_filename = NULL;
     char *ret = NULL;
     char *tmp_time = pvt_get_time();
-    
+
     if (op_array == 0) {
         return;
     }
-    
-    
-    zend_uint base_address = (zend_uintptr_t) &(op_array->opcodes[0]);    
-    
+
+    zend_uint base_address = (zend_uintptr_t) &(op_array->opcodes[0]);
+
     if (file_name == NULL) {
         spprintf(&file_name, 0, "%s", "none");
-    }  
+    }
 
 #ifdef ZEND_ENGINE_2
     php_basename(file_name, strlen(file_name), NULL, 0, &ret, &ret_len TSRMLS_CC);
@@ -399,17 +397,17 @@ void dump_opcode(char *func_name, char *file_name, zend_op_array *op_array TSRML
     ret = php_basename(file_name, strlen(file_name), "", 0);
     ret_len = strlen(ret);
 #endif
-    //log_filename = pvt_sprintf("%s/opcodes/t-%s-%s.html", PVT_G(log_folder), (char *) pvt_normalize_str(ret), func_name);
+
     pvt_normalize_str(ret);
     spprintf(&log_filename, 0, "%s/opcodes/t-%s-%s.html", PVT_G(log_folder), ret, func_name);
     PVT_G(log_file_path) = fopen(log_filename, "w");
-    
+
     efree(ret);
-    
+
     if (!PVT_G(log_file_path)) {
         zend_error(E_ERROR, "PVT: unable to open log file '%s'.", log_filename);
     }
-    
+
     fprintf(PVT_G(log_file_path), "\
 <html>\
 <link rel=\"stylesheet\" type=\"text/css\" href=\"%s/design/main.css\"/>\
@@ -426,16 +424,15 @@ void dump_opcode(char *func_name, char *file_name, zend_op_array *op_array TSRML
 <tr id=\"m\">\
 <td class=\"w20\">Op num</td><td>Line</td><td>Opcode</td><td>Result</td><td>OP 1</td><td>OP 2</td></tr>\
 ");
-    
+
     for (i = 0; i < op_array->last; i++) {
         dump_op(op_array, &op_array->opcodes[i], i, base_address);
     }
-    
+
     fprintf(PVT_G(log_file_path), "</table></body></html>\n");
     fclose(PVT_G(log_file_path));
-    
+
     efree(tmp_time);
     efree(log_filename);
-    
 }
 

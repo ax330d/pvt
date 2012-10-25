@@ -83,7 +83,7 @@ PHP_INI_BEGIN()
 
     STD_PHP_INI_BOOLEAN("pvt.dump_ops",             "0", PHP_INI_ALL, OnUpdateBool, pvt_dump_ops, zend_pvt_globals, pvt_globals)
     STD_PHP_INI_BOOLEAN("pvt.trace_func",           "0", PHP_INI_ALL, OnUpdateBool, pvt_trace_func, zend_pvt_globals, pvt_globals)
-    
+
     STD_PHP_INI_BOOLEAN("pvt.dump_vars",            "0", PHP_INI_ALL, OnUpdateBool, pvt_dump_vars, zend_pvt_globals, pvt_globals)
     STD_PHP_INI_ENTRY("pvt.dump_vars_list",         "",  PHP_INI_ALL, OnUpdateString, pvt_dump_vars_list, zend_pvt_globals, pvt_globals)
     STD_PHP_INI_BOOLEAN("pvt.dump_vars_all",        "0", PHP_INI_ALL, OnUpdateBool, pvt_dump_vars_all, zend_pvt_globals, pvt_globals)
@@ -112,7 +112,7 @@ static char *zfunc_typename(int type)
  */
 static void php_pvt_init_globals(zend_pvt_globals *pvt_globals TSRMLS_DC)
 {
-    memset(pvt_globals, 0, sizeof(zend_pvt_globals));  
+    memset(pvt_globals, 0, sizeof(zend_pvt_globals));
 
     pvt_globals->pvt_log_file           = "/tmp";
     pvt_globals->pvt_log_one_folder     = 0;
@@ -166,24 +166,24 @@ static void pvt_config(char *config)
 {
     int i;
     pvt_arg *parts;
-    
-    // _PVT format: _PVT=var=val|var=val
-    
+
+    /* _PVT format: _PVT=var=val|var=val */
+
     if (!config) {
         return;
     }
-    
+
     parts = (pvt_arg*) malloc(sizeof(pvt_arg));
     pvt_arg_init(parts);
     pvt_explode("|", config, parts, -1);
 
     for (i = 0; i < parts->c; ++i) {
-        
+
         char *name   = NULL;
         char *envvar = parts->args[i];
         char *envval = NULL;
         char *eq     = strchr(envvar, '=');
-        
+
         if (!eq || !*eq) {
             continue;
         }
@@ -192,8 +192,8 @@ static void pvt_config(char *config)
         if (!*envval) {
             continue;
         }
-        
-        // Graph settings
+
+        /* Graph settings */
         if (strcasecmp(envvar, "graph_fold") == 0) {
             name = "pvt.graph_fold";
         } else
@@ -201,17 +201,17 @@ static void pvt_config(char *config)
             name = "pvt.count_stat";
         } else
 
-        // Switch module 1
+        /* Switch module 1 */
         if (strcasecmp(envvar, "trace_func") == 0) {
             name = "pvt.trace_func";
         } else
-        
-        // Switch module 2
+
+        /* Switch module 2 */
         if (strcasecmp(envvar, "dump_ops") == 0) {
             name = "pvt.dump_ops";
         } else
-        
-        // Switch module 3
+
+        /* Switch module 3 */
         if (strcasecmp(envvar, "dump_vars") == 0) {
             name = "pvt.dump_vars";
         } else
@@ -224,8 +224,8 @@ static void pvt_config(char *config)
         if (strcasecmp(envvar, "dump_vars_separate") == 0) {
             name = "pvt.dump_vars_separate";
         } else
-        
-        // Switch module 4 
+
+        /* Switch module 4  */
         if (strcasecmp(envvar, "eval_hook") == 0) {
             name = "pvt.eval_hook";
         } else
@@ -237,9 +237,9 @@ static void pvt_config(char *config)
         } else
         if (strcasecmp(envvar, "eval_hook_len") == 0) {
             name = "pvt.eval_hook_len";
-        } else 
-        
-        // Switch module 5
+        } else
+
+        /* Switch module 5 */
         if (strcasecmp(envvar, "catch_marker") == 0) {
             name = "pvt.catch_marker";
         } else
@@ -251,11 +251,11 @@ static void pvt_config(char *config)
         } else
         if (strcasecmp(envvar, "catch_all") == 0) {
             name = "pvt.catch_all";
-        } else 
+        } else
         if (strcasecmp(envvar, "catch_len") == 0) {
             name = "pvt.catch_len";
         }
-        
+
         if (name) {
             zend_alter_ini_entry(name, strlen(name) + 1, envval, strlen(envval), PHP_INI_SYSTEM, PHP_INI_STAGE_ACTIVATE);
         }
@@ -270,12 +270,12 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
     int flag_printed = 0;
     char *copy = NULL, *found = NULL;
     zend_bool flag_skip = 0;
-    
+
 #if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s Prologue:\t%f\n", __func__, pvt_get_utime() - PVT_G(pvt_start_time));
 #endif
 
-    // Ignore non string eval()
+    /* Ignore non string eval() */
     if (Z_TYPE_P(source_string) != IS_STRING) {
         return orig_compile_string(source_string, filename TSRMLS_CC);
     }
@@ -285,18 +285,18 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
     if (len > strlen(copy)) {
         for (c=0; c<len; c++) if (copy[c] == 0) copy[c] == '?';
     }
-    
+
     unsigned int marker_len  = strlen(PVT_G(pvt_eval_marker));
     unsigned int buff_len    = strlen(copy);
     unsigned int found_pos   = 0;
 
-    // Search for marker value
+    /* Search for marker value */
     if ((strlen(PVT_G(pvt_eval_marker)) > 0) && (! PVT_G(pvt_eval_hook_all))) {
-        
+
         char *endp;
         endp = copy + buff_len;
         found = pvt_memnstr(copy, PVT_G(pvt_eval_marker), marker_len, endp);
-        
+
         if ((found != NULL)) {
             found_pos = buff_len - strlen(found);
             flag_printed = 1;
@@ -305,25 +305,25 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
         flag_printed = 1;
     }
 
-    /* Search for entry in database 
+    /* Search for entry in database
      * At the moment it relies on string length, found position and filename.
      */
     int x;
     if (PVT_G(pvt_eval_unique)) {
         for (x = 0; x < PVT_G(evalued)->len; x++) {
-            if (PVT_G(evalued)->strlen[x] == buff_len 
+            if (PVT_G(evalued)->strlen[x] == buff_len
                 && PVT_G(evalued)->lineno[x] == found_pos
-                && (strcasecmp(PVT_G(evalued)->filename[x], filename) == 0)) 
+                && (strcasecmp(PVT_G(evalued)->filename[x], filename) == 0))
             {
                 flag_skip = 1;
             }
         }
     }
 
-    // If marker was found and unique string evaluated
+    /* If marker was found and unique string evaluated */
     if (flag_printed && !flag_skip) {
-    
-        // If we have to cut string, do that
+
+        /* If we have to cut string, do that */
         if ((buff_len > PVT_G(pvt_eval_hook_len) + marker_len) && PVT_G(pvt_eval_hook_len) > 0) {
 
             char *buff_cut = NULL;
@@ -331,20 +331,20 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
             if (cut_start < 0) {
                 cut_start = 0;
             }
-            
+
             buff_cut = pvt_substr(cut_start, PVT_G(pvt_eval_hook_len) + marker_len + found_pos, copy);
             fprintf(PVT_G(trace_file_e), "\n/**\n * %s (%d bytes)\n * Showing only %lu bytes\n */\n%s\n", filename, buff_len, strlen(buff_cut), buff_cut);
-            
+
             if (buff_cut) {
                 efree(buff_cut);
             }
-            
+
         } else {
             fprintf(PVT_G(trace_file_e), "\n/**\n * %s (%d bytes)\n */\n%s\n", filename, buff_len, copy);
         }
 
         if (PVT_G(pvt_eval_unique)) {
-            // Add to database
+            /* Add to database */
             PVT_G(evalued)->strlen = realloc(PVT_G(evalued)->strlen, (PVT_G(evalued)->len+1) * sizeof(int));
             PVT_G(evalued)->strlen[PVT_G(evalued)->len] = buff_len;
 
@@ -359,7 +359,7 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
             PVT_G(evalued)->len += 1;
         }
     }
-    
+
     if (copy) {
         efree(copy);
     }
@@ -381,7 +381,7 @@ void get_and_dump_args(char *function_name, int lineno, char *filename, zend_fun
     char *key = NULL;
     char *buffer;
     char *delimiter = NULL;
-    
+
     zval tmp;
     zval **data = NULL;
     HashPosition iterator;
@@ -389,7 +389,7 @@ void get_and_dump_args(char *function_name, int lineno, char *filename, zend_fun
 
     int function_type = finfo->function->common.type;
     int func_num_args = finfo->function->common.num_args;
-    delimiter = str_repeat("-", 80);    
+    delimiter = str_repeat("-", 80);
 
 #if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s Prologue:\t%f\n", __func__, pvt_get_utime() - PVT_G(pvt_start_time));
@@ -397,16 +397,16 @@ void get_and_dump_args(char *function_name, int lineno, char *filename, zend_fun
 
     flag_cought  = 0;
     flag_printed = 0;
-    
-    // Parse functions list if we need to watch after some of them 
+
+    /* Parse functions list if we need to watch after some of them  */
     if (strlen(PVT_G(pvt_catch_funcs)) > 0 && (!PVT_G(pvt_catch_all))) {
-        
+
         pvt_arg *parts = (pvt_arg*) malloc(sizeof(pvt_arg));
         pvt_arg_init(parts);
         pvt_explode(",", PVT_G(pvt_catch_funcs), parts, -1);
-        
+
         for (z = 0; z < parts->c; ++z) {
-            // If no match, go to next variable
+            /* If no match, go to next variable */
             if (strcasecmp(parts->args[z], function_name) == 0) {
                 flag_cought = 1;
                 break;
@@ -415,48 +415,48 @@ void get_and_dump_args(char *function_name, int lineno, char *filename, zend_fun
         pvt_arg_dtor(parts);
     }
 
-    // If functions list was set and nothing found, exit
+    /* If functions list was set and nothing found, exit */
     if (strlen(PVT_G(pvt_catch_funcs)) > 0 && (flag_cought == 0) && (!PVT_G(pvt_catch_all))) {
         return;
     }
 
     zend_hash_internal_pointer_reset_ex(arg_array->value.ht, &iterator);
 
-    // Iterate through the arguments of function
+    /* Iterate through the arguments of function */
     while (zend_hash_get_current_data_ex(arg_array->value.ht, (void **) &tmp, &iterator) == SUCCESS) {
-        
+
         flag_printed = 0;
         key_type = zend_hash_get_current_key_ex(arg_array->value.ht, &key, &key_len, &index, 0, &iterator);
-        
+
         zend_hash_get_current_data_ex(arg_array->value.ht, (void**) &data, &iterator);
-        
+
         tmp = **data;
         zval_copy_ctor(&tmp);
         INIT_PZVAL(&tmp);
-        
-        // Currently only strings support
+
+        /* Currently only strings support */
         if (Z_TYPE(tmp) != IS_STRING) {
             zend_hash_move_forward_ex(arg_array->value.ht, &iterator);
             zval_dtor(&tmp);
             continue;
-        }   
+        }
 
         convert_to_string(&tmp);
         buffer = estrndup(Z_STRVAL(tmp), Z_STRLEN(tmp));
         zval_dtor(&tmp);
-        
+
         unsigned int found_pos   = 0;
         unsigned int buff_len    = strlen(buffer);
         unsigned int marker_len  = strlen(PVT_G(pvt_catch_marker_val));
         char *found = NULL;
 
-        // Search for marker value
+        /* Search for marker value */
         if (strlen(PVT_G(pvt_catch_marker_val)) > 0) {
-            
+
             char *endp;
             endp = buffer + buff_len;
             found = pvt_memnstr(buffer, PVT_G(pvt_catch_marker_val), marker_len, endp);
-            
+
             if ((found != NULL)) {
                 found_pos = buff_len - strlen(found);
                 flag_printed = 1;
@@ -466,29 +466,29 @@ void get_and_dump_args(char *function_name, int lineno, char *filename, zend_fun
             flag_printed = 1;
         }
 
-        // If marker was found
+        /* If marker was found */
         if (flag_printed) {
 
             fprintf(PVT_G(trace_file_c),
-                "%f # %s() %s:%d %s max args:%d, %d bytes, starting at %d\n", 
+                "%f # %s() %s:%d %s max args:%d, %d bytes, starting at %d\n",
                 pvt_get_utime(), function_name, filename, lineno, zfunc_typename(function_type), func_num_args, buff_len, found_pos
             );
-            
+
             if (key_type == HASH_KEY_IS_STRING) {
                 fprintf(PVT_G(trace_file_c), " $%s = ", key);
             } else if (key_type == HASH_KEY_IS_LONG) {
-                // For language constructions, not functions
+                /* For language constructions, not functions */
                 if (index < finfo->function->common.num_args) {
                     fprintf(PVT_G(trace_file_c), " %lu $%s = ", index + 1, finfo->function->common.arg_info[index].name);
                 }  else {
                     fprintf(PVT_G(trace_file_c), " %lu = ", index + 1);
                 }
             }
-     
-            // If we have to cut string, do that
+
+            /* If we have to cut string, do that */
             if ((buff_len > PVT_G(pvt_catch_len) + marker_len) && PVT_G(pvt_catch_len) > 0) {
                 char *buff_cut = NULL;
-                
+
                 if (found_pos > PVT_G(pvt_catch_len)) {
                     int cut_start = found_pos - PVT_G(pvt_catch_len);
                     if (cut_start < 0) {
@@ -517,9 +517,9 @@ void get_and_dump_args(char *function_name, int lineno, char *filename, zend_fun
     if (flag_printed) {
         fprintf(PVT_G(trace_file_c), "%s\n", delimiter);
     }
-    
+
     efree(delimiter);
-    
+
     if (key) {
         efree(key);
     }
@@ -543,40 +543,40 @@ char *pvt_get_active_function_name(zend_op_array *op_array TSRMLS_DC)
 #endif
 
     zend_execute_data *executed = EG(current_execute_data);
-    
+
     if (!executed) {
         func_name = estrdup("main");
         return func_name;
     }
-    
+
     tmp_fname = executed->function_state.function->common.function_name;
-    
+
     if (tmp_fname) {
-        
+
         tmp_fname_len = strlen(tmp_fname);
-        
+
         if (executed->object) {
-            
+
             class_name = Z_OBJCE(*executed->object)->name;
             class_name_len = strlen(class_name);
-            
+
             func_name = (char *) emalloc(class_name_len + tmp_fname_len + 3);
             snprintf(func_name, class_name_len + tmp_fname_len + 3, "%s->%s", class_name, tmp_fname);
-            
+
         } else if (executed->function_state.function->common.scope) {
-            
+
             class_name = executed->function_state.function->common.scope->name;
             class_name_len = strlen(class_name);
-            
+
             func_name = (char *) emalloc(class_name_len + tmp_fname_len + 3);
             snprintf(func_name, class_name_len + tmp_fname_len + 3, "%s::%s", class_name, tmp_fname);
-            
+
         } else {
             func_name = estrdup(tmp_fname);
         }
-        
+
     } else {
-        
+
 #if ZEND_MODULE_API_NO >= 20100409 /* ZE2.4 */
         switch (executed->opline->op2.constant) {
 #else
@@ -602,19 +602,19 @@ char *pvt_get_active_function_name(zend_op_array *op_array TSRMLS_DC)
                 break;
         }
     }
-    
+
 #if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s Epilogue:\t%f\n", __func__, pvt_get_utime() - PVT_G(pvt_start_time));
 #endif
 
     return func_name;
-} 
+}
 
 /*
  * TODO: Avoid a memory leak when script gets interrupted during the runtime.
  */
- 
-static void pvt_execute(zend_op_array *op_array TSRMLS_DC) 
+
+static void pvt_execute(zend_op_array *op_array TSRMLS_DC)
 {
     char *file_name = zend_get_executed_filename(TSRMLS_C);
     char *func_name = pvt_get_active_function_name(op_array TSRMLS_CC);
@@ -626,21 +626,21 @@ static void pvt_execute(zend_op_array *op_array TSRMLS_DC)
     if (PVT_G(pvt_trace_func)) {
         trace_function_entry(EG(function_table), func_name, ZEND_USER_FUNCTION, file_name, zend_get_executed_lineno(TSRMLS_C));
     }
-    
+
     if (PVT_G(pvt_catch_marker)) {
         pvt_trace_variables();
     }
-    
+
     if (PVT_G(pvt_dump_ops)) {
         dump_opcode(func_name, file_name, op_array);
     }
-    
+
     old_execute(op_array TSRMLS_CC);
 
     if (PVT_G(pvt_trace_func)) {
         trace_function_exit(func_name, file_name, ZEND_USER_FUNCTION, zend_get_executed_lineno(TSRMLS_C));
     }
-    
+
     if (func_name) {
         efree(func_name);
     }
@@ -651,7 +651,7 @@ static void pvt_execute(zend_op_array *op_array TSRMLS_DC)
 
 }
 
-static void pvt_execute_internal(zend_execute_data *execute_data_ptr, int return_value_used TSRMLS_DC) 
+static void pvt_execute_internal(zend_execute_data *execute_data_ptr, int return_value_used TSRMLS_DC)
 {
     zend_execute_data *executed = EG(current_execute_data);
     char *func_name = pvt_get_active_function_name(executed->op_array TSRMLS_CC);
@@ -664,25 +664,25 @@ static void pvt_execute_internal(zend_execute_data *execute_data_ptr, int return
     if (PVT_G(pvt_trace_func)) {
         trace_function_entry(EG(function_table), func_name, ZEND_INTERNAL_FUNCTION, file_name, zend_get_executed_lineno(TSRMLS_C));
     }
-    
+
     if (PVT_G(pvt_catch_marker)) {
         pvt_trace_variables();
     }
-    
+
     if (PVT_G(pvt_dump_ops)) {
         dump_opcode(func_name, file_name, executed->op_array);
     }
 
     execute_internal(execute_data_ptr, return_value_used TSRMLS_CC);
-    
+
     if (PVT_G(pvt_trace_func)) {
         trace_function_exit(func_name, zend_get_executed_filename(TSRMLS_C), ZEND_INTERNAL_FUNCTION, zend_get_executed_lineno(TSRMLS_C));
     }
-    
+
     if (func_name) {
         efree(func_name);
     }
-    
+
 
 #if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s Epilogue:\t%f\n", __func__, pvt_get_utime() - PVT_G(pvt_start_time));
@@ -713,11 +713,11 @@ PHP_MINIT_FUNCTION(pvt)
 #if PVT_DBG_TIME >= 1
     char *filename_dbg = NULL;
     spprintf(&filename_dbg, 0, "%s/dump/timing-DBG.txt", PVT_G(pvt_log_file));
-    
+
     PVT_G(timing_dbg) = fopen(filename_dbg, "a");
     efree(filename_dbg);
 
-    fprintf(PVT_G(timing_dbg), "\n--- NEW ---\n");    
+    fprintf(PVT_G(timing_dbg), "\n--- NEW ---\n");
     fprintf(PVT_G(timing_dbg), "%s:\t%f\n", __func__, pvt_get_utime());
 #endif
 
@@ -744,16 +744,16 @@ PHP_MSHUTDOWN_FUNCTION(pvt)
 #if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s:\t%f\n", __func__, pvt_get_utime());
     fprintf(PVT_G(timing_dbg), "Total run:\t%f\n", pvt_get_utime() - PVT_G(pvt_start_time));
-    fprintf(PVT_G(timing_dbg), 
+    fprintf(PVT_G(timing_dbg),
         "Modules:\n\ttrace = %d\n"
         "\tdump_ops = %d\n"
         "\tdump_vars = %d\n"
         "\teval_hook = %d\n"
         "\tcatch = %d\n",
-        PVT_G(pvt_trace_func), 
-        PVT_G(pvt_dump_ops), 
-        PVT_G(pvt_dump_vars), 
-        PVT_G(pvt_eval_hook), 
+        PVT_G(pvt_trace_func),
+        PVT_G(pvt_dump_ops),
+        PVT_G(pvt_dump_vars),
+        PVT_G(pvt_eval_hook),
         PVT_G(pvt_catch_marker)
     );
 
@@ -764,13 +764,13 @@ PHP_MSHUTDOWN_FUNCTION(pvt)
         evalhook_hooked = 0;
         zend_compile_string = orig_compile_string;
     }
-    
+
     zend_execute = old_execute;
     zend_execute_internal = old_zend_execute_internal;
 
     zend_hash_destroy(PVT_G(function_summary));
     zend_hash_destroy(PVT_G(file_summary));
-    zend_hash_destroy(PVT_G(block_summary));    
+    zend_hash_destroy(PVT_G(block_summary));
 
 #ifdef ZTS
     ts_free_id(pvt_globals_id);
@@ -822,16 +822,16 @@ PHP_RINIT_FUNCTION(pvt)
     }
 
 
-    // Redefine php.ini settings
+    /* Redefine php.ini settings */
     zend_is_auto_global("_GET", sizeof("_GET")-1 TSRMLS_CC);
-    
+
     if (PG(http_globals)[TRACK_VARS_GET] && zend_hash_find(PG(http_globals)[TRACK_VARS_GET]->value.ht, "_PVT", sizeof("_PVT"), (void **) &dummy) == SUCCESS) {
         pvt_config(Z_STRVAL_PP(dummy));
         zend_hash_del(PG(http_globals)[TRACK_VARS_GET]->value.ht, "_PVT", sizeof("_PVT"));
     }
-    
+
     zend_is_auto_global("_POST", sizeof("_POST")-1 TSRMLS_CC);
-    
+
     if (PG(http_globals)[TRACK_VARS_POST] && zend_hash_find(PG(http_globals)[TRACK_VARS_POST]->value.ht, "_PVT", sizeof("_PVT"), (void **) &dummy) == SUCCESS) {
         pvt_config(Z_STRVAL_PP(dummy));
         zend_hash_del(PG(http_globals)[TRACK_VARS_POST]->value.ht, "_PVT", sizeof("_PVT"));
@@ -843,44 +843,44 @@ PHP_RINIT_FUNCTION(pvt)
     } else {
         spprintf(&PVT_G(log_folder), 0, "%s/dump/pvt-%s", PVT_G(pvt_log_file), time);
     }
-    
+
 
     ret_stat = stat(PVT_G(log_folder), &buf);
-    
+
     if ((php_mkdir(PVT_G(log_folder), 0777) == -1) && (ret_stat == -1)) {
         zend_error(E_ERROR, "PVT: unable to create folder '%s'.", PVT_G(log_folder));
     }
 
-    // Module 1 - function tracer
+    /* Module 1 - function tracer */
     if (PVT_G(pvt_trace_func)) {
 
         spprintf(&fn_tracer, 0, "%s/trace-functions.txt", PVT_G(log_folder));
-        
+
         if (!(PVT_G(trace_file_f) = fopen(fn_tracer, write_mode))) {
             zend_error(E_ERROR, "PVT: unable to open provided path for dump (trace-f)");
         }
-        
+
         fprintf(PVT_G(trace_file_f), "Function trace [%s]\n%s\n", time, space);
         fprintf(PVT_G(trace_file_f), "Line | Index | File, function, type\n");
         chmod(fn_tracer, 0777);
         efree(fn_tracer);
-        
+
         PVT_G(dot_funcs_i)  = malloc(sizeof(dot_funcs_index));
         PVT_G(funcs)        = malloc(sizeof(dot_funcs));
         PVT_G(funcs_stack)  = malloc(sizeof(dot_funcs_stack));
-        
+
         memset(PVT_G(dot_funcs_i),    0, sizeof(dot_funcs_index));
         memset(PVT_G(funcs),          0, sizeof(dot_funcs));
         memset(PVT_G(funcs_stack),    0, sizeof(dot_funcs_stack));
     }
 
-    // Module 2 - opcode dumper
+    /* Module 2 - opcode dumper */
     if (PVT_G(pvt_dump_ops)) {
-        
+
         char *folder_o = NULL;
         spprintf(&folder_o, 0, "%s/opcodes", PVT_G(log_folder));
         ret_stat = stat(folder_o, &buf);
-        
+
         if ((php_mkdir(folder_o, 0777) == -1) && (ret_stat == -1)) {
             zend_error(E_ERROR, "PVT: unable to create folder '%s'", folder_o);
         }
@@ -888,9 +888,9 @@ PHP_RINIT_FUNCTION(pvt)
     }
 
     /* Module 3 - variables dumper */
-    if (PVT_G(pvt_dump_vars)) {  
+    if (PVT_G(pvt_dump_vars)) {
         spprintf(&fn_dump_vars, 0, "%s/dump-variables.txt", PVT_G(log_folder));
-        
+
         if (!(PVT_G(trace_file_v) = fopen(fn_dump_vars, write_mode))) {
             zend_error(E_ERROR, "PVT: unable to open provided path for dump (trace-v)");
         }
@@ -899,12 +899,12 @@ PHP_RINIT_FUNCTION(pvt)
         }
         chmod(fn_dump_vars, 0777);
         efree(fn_dump_vars);
-    } 
+    }
 
-    // Module 4 - eval hooker
+    /* Module 4 - eval hooker */
     if (PVT_G(pvt_eval_hook)) {
         spprintf(&fn_eval, 0, "%s/dump-evaluated.phps", PVT_G(log_folder));
-        
+
         if (!(PVT_G(trace_file_e) = fopen(fn_eval, write_mode))) {
             zend_error(E_ERROR, "PVT: unable to open provided path for dump (evalhook)");
         }
@@ -919,11 +919,11 @@ PHP_RINIT_FUNCTION(pvt)
             memset(PVT_G(evalued), 0, sizeof(eval_db));
         }
     }
-    
-    // Module 5 - marker catch
+
+    /* Module 5 - marker catch */
     if (PVT_G(pvt_catch_marker)) {
         spprintf(&fn_catch, 0, "%s/catched-marker.txt", PVT_G(log_folder));
-        
+
         if (!(PVT_G(trace_file_c) = fopen(fn_catch, write_mode))) {
             zend_error(E_ERROR, "PVT: unable to open provided path for dump (%s)", fn_catch);
         }
@@ -934,7 +934,7 @@ PHP_RINIT_FUNCTION(pvt)
         efree(fn_catch);
     }
 
-    // Runtime statistics
+    /* Runtime statistics */
     if (PVT_G(pvt_count_stat)) {
         PVT_G(stats) = emalloc(sizeof(stats_db));
         memset(PVT_G(stats), 0, sizeof(stats_db));
@@ -943,11 +943,11 @@ PHP_RINIT_FUNCTION(pvt)
     efree(write_mode);
     efree(time);
     efree(space);
-    
-#if PVT_DBG_TIME >= 1  
+
+#if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s Epilogue:\t%f\n", __func__, pvt_get_utime() - PVT_G(pvt_start_time));
 #endif
-    
+
     return SUCCESS;
 }
 /* }}} */
@@ -959,8 +959,8 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
     fprintf(PVT_G(timing_dbg), "\n--- REQUEST END ---\n");
 #endif
 
-    // Evalhook database
-    
+    /* Evalhook database */
+
     if (PVT_G(pvt_eval_hook) && PVT_G(pvt_eval_unique)) {
         int i;
         for (i = 0; i < PVT_G(evalued)->len; ++i) {
@@ -968,7 +968,7 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
         }
         if (PVT_G(evalued)->filename) {
             efree(PVT_G(evalued)->filename);
-        }     
+        }
         if (PVT_G(evalued)->strlen) {
             efree(PVT_G(evalued)->strlen);
         }
@@ -978,10 +978,10 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
         efree(PVT_G(evalued));
     }
 
-    // PVT Statistics 
-    
+    /* PVT Statistics  */
+
     if (PVT_G(pvt_count_stat)) {
-    
+
         char *file_stats = NULL;
         char *write_mode = NULL;
         char *delimiter  = NULL;
@@ -998,7 +998,7 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
         }
 
         spprintf(&file_stats, 0, "%s/stats.txt", PVT_G(log_folder));
-        
+
         if (!(fs_handle = fopen(file_stats, write_mode))) {
             zend_error(E_ERROR, "PVT: unable to open provided path for stats");
         }
@@ -1019,18 +1019,18 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
 
         fclose(fs_handle);
         chmod(file_stats, 0777);
-        
+
         efree(file_stats);
         efree(write_mode);
         efree(delimiter);
-        
+
         if (PVT_G(stats)) {
             efree(PVT_G(stats));
         }
     }
 
-    // Catch marker
-    
+    /* Catch marker */
+
     if (PVT_G(trace_file_c)) {
         fclose(PVT_G(trace_file_c));
     }
@@ -1039,13 +1039,13 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
         fclose(PVT_G(trace_file_e));
     }
 
-    // Dump variables
+    /* Dump variables */
 
     if (PVT_G(trace_file_v)) {
         fclose(PVT_G(trace_file_v));
     }
-    
-    // Functions trace
+
+    /* Functions trace */
 
     if (PVT_G(trace_file_f)) {
         fclose(PVT_G(trace_file_f));
@@ -1053,9 +1053,9 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
         dump_dot();
         free_dot();
     }
-    
+
     efree(PVT_G(log_folder));
-    
+
     zend_hash_clean(PVT_G(function_summary));
     zend_hash_clean(PVT_G(file_summary));
     zend_hash_clean(PVT_G(block_summary));
@@ -1070,7 +1070,7 @@ PHP_RSHUTDOWN_FUNCTION(pvt)
 static void init_dot(void)
 {
     TSRMLS_FETCH();
-    
+
     char *filename_f = NULL;
     char *write_mode = NULL;
 
@@ -1083,11 +1083,11 @@ static void init_dot(void)
     }
 
     spprintf(&filename_f, 0, "%s/trace-functions.dot", PVT_G(log_folder));
-    
+
     if (!(PVT_G(trace_file_f_dot) = fopen(filename_f, write_mode))) {
         zend_error(E_ERROR, "PVT: unable to open provided path for dump (trace-f-dot)");
     }
-    
+
     chmod(filename_f, 0777);
     efree(filename_f);
     efree(write_mode);
@@ -1096,8 +1096,8 @@ static void init_dot(void)
 static void free_dot(void)
 {
     TSRMLS_FETCH();
-    
-    // First structure
+
+    /* First structure */
 
     if (PVT_G(dot_funcs_i)->file_id) {
         free(PVT_G(dot_funcs_i)->file_id);
@@ -1109,7 +1109,7 @@ static void free_dot(void)
         free(PVT_G(dot_funcs_i));
     }
 
-    // Second structure
+    /* Second structure */
 
     int i;
     for (i = 0; i < PVT_G(funcs)->len; ++i) {
@@ -1121,7 +1121,7 @@ static void free_dot(void)
     }
     if (PVT_G(funcs)->file_name) {
         free(PVT_G(funcs)->file_name);
-    }     
+    }
     if (PVT_G(funcs)->is_evil) {
         free(PVT_G(funcs)->is_evil);
     }
@@ -1150,7 +1150,7 @@ static void free_dot(void)
         free(PVT_G(funcs));
     }
 
-    // Third structure
+    /* Third structure */
 
     if (PVT_G(funcs_stack)->func_id) {
         free(PVT_G(funcs_stack)->func_id);
@@ -1176,41 +1176,41 @@ static void dump_variables(zend_op_array *op_array)
 
     delimiter = str_repeat("-", 80);
     char *file_name = zend_get_executed_filename(TSRMLS_C);
-    char *class_name = active_function->common.scope 
-        ? active_function->common.scope->name 
+    char *class_name = active_function->common.scope
+        ? active_function->common.scope->name
         : "";
 
     pvt_arg *parts = (pvt_arg*) malloc(sizeof(pvt_arg));
     pvt_arg_init(parts);
     pvt_explode(",", PVT_G(pvt_dump_vars_list), parts, -1);
-    
+
     for (i = 0; i < op_array->last_var; i++) {
-        
-        // If settings are set to track variables
+
+        /* If settings are set to track variables */
         if (strlen(PVT_G(pvt_dump_vars_list)) > 0 || PVT_G(pvt_dump_vars_all)) {
-        
+
             for (z = 0; z < parts->c; ++z) {
-            
+
                 char *varn = parts->args[z];
-                
+
                 if (0 == (strcasecmp(varn, op_array->vars[i].name)) || PVT_G(pvt_dump_vars_all)) {
-                    
-                    fprintf(PVT_G(trace_file_v), "%s:%d in %s%s%s()", 
+
+                    fprintf(PVT_G(trace_file_v), "%s:%d in %s%s%s()",
                             file_name, lineno, class_name,
                             class_name[0] ? "::" : "",
                             get_active_function_name(TSRMLS_C));
-                          
+
                     fprintf(PVT_G(trace_file_v), "\n!%d: $%s = ", i, op_array->vars[i].name);
 
                     if ((zend_hash_find(
-                            &EG(symbol_table), 
-                            (char *) op_array->vars[i].name, 
-                            strlen(op_array->vars[i].name) + 1, 
-                            (void **) &var_value) == SUCCESS)) 
-                    {    
+                            &EG(symbol_table),
+                            (char *) op_array->vars[i].name,
+                            strlen(op_array->vars[i].name) + 1,
+                            (void **) &var_value) == SUCCESS))
+                    {
                         tmpcopy = **var_value;
                         zval_copy_ctor(&tmpcopy);
-                        
+
                         switch(Z_TYPE_PP(var_value)) {
                             case IS_NULL:
                                 fprintf(PVT_G(trace_file_v), "NULL");
@@ -1244,28 +1244,28 @@ static void dump_variables(zend_op_array *op_array)
                                 fprintf(PVT_G(trace_file_v), "PVT: UNKNOWN");
                                 break;
                         }
-                        
+
                         zval_dtor(&tmpcopy);
-                        
+
                     } else {
                         fprintf(PVT_G(trace_file_v), "PVT: UNINITIALIZED");
-                    } 
+                    }
 
-                    // end if ((zend_hash_find(...
+                    /* end if ((zend_hash_find(... */
                     if (!op_array->last_var) {
                         fprintf(PVT_G(trace_file_v), "none\n");
                     }
                     fprintf(PVT_G(trace_file_v), "\n%s\n", delimiter);
-                    
-                } // end if ((strcasecmp(...
-                
-            } // end for (z...
-        } // end if (strlen(...
-    } // end for (i...
- 
+
+                } /* end if ((strcasecmp(... */
+
+            } /* end for (z... */
+        } /* end if (strlen(... */
+    } /* end for (i... */
+
     pvt_arg_dtor(parts);
     efree(delimiter);
-    
+
 #if PVT_DBG_TIME >= 1
     fprintf(PVT_G(timing_dbg), "%s Epilogue:\t%f\n", __func__, pvt_get_utime() - PVT_G(pvt_start_time));
 #endif

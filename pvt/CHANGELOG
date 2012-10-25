@@ -1,3 +1,11 @@
+v 0.3.1     25-10-2012
+ * first public release
+ * small code fixes
+
+v 0.3       30-06-2012
+ * fixed many memory leaks
+ * fixed bug when extension was crashing when launched script from CLI
+ * removed dead code
 
 v 0.2       03-12-2011
  * fixed several memory leaks

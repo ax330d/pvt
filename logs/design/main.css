@@ -1,0 +1,40 @@
+body {
+    font-size: 0.9em;
+    font-family: verdana,arial,serif;
+    margin: 0px;
+}
+
+div.logo {
+    background-color: #333;
+    color: red;
+    font-size: 1.4em;
+    padding: 5px;
+}
+
+p {
+    padding: 5px;
+}
+h3 {
+    padding: 5px;
+}
+table {
+    font-size: 0.85em;
+    border-collapse: collapse;
+    color: #333;
+    margin: 0px 10px;
+}
+tr:hover {
+    background-color: #eee;
+    color:#000;
+}
+tr#m {font-weight:bold;color:#333;padding:3px;}
+#m td {background-color:#eee;color:#666;padding:5px;font-size:1.1em;border-bottom:1px solid #999;}
+td {border:1px solid #eee; padding: 2px;}
+td.w20 {width: 32px;}
+td.wz {width: 128px;}
+td.a {
+    font-weight: bold;
+}
+tr.s {
+    background-color: #e0f0ff;
+}

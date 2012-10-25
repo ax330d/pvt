@@ -1,0 +1,188 @@
+body {
+    margin: 0px;
+    font-size: 0.9em;
+    font-family: verdana, arial;
+}
+a {
+    text-decoration: none;
+    color: #000;
+    font-size: 1.2em;
+}
+
+#menu {
+    position: fixed;
+    background-color: #999;
+    padding: 10px;
+    color: #000;
+    top: 10px;
+    left: 10px;
+    webkit-box-shadow: 3px 3px 12px #999;
+    moz-box-shadow: 3px 3px 12px #999;
+    box-shadow: 3px 3px 12px #999;
+    filter:alpha(opacity=85); /* for dear IE */
+    -moz-opacity:.85;
+    opacity:.85;
+    text-align: center;
+    z-index: 1;
+}
+
+#menu p {
+    padding: 0px;
+    margin: 0px;
+}
+
+.f {
+    background-color: #666;
+    color: #ccc;
+    border-right: 3px solid #f9f9f9;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.hl {
+    background-color: #ffcccc;
+    font-weight: bold;
+}
+pre {
+    padding: 0px;
+    margin: 0px;
+}
+table {
+    border-collapse: collapse;
+    padding: 0px;
+    margin: 0px;
+    font-family: monospace;
+    font-size: 1.2em;
+    white-space: nowrap;
+}
+td {
+    padding: 0px;
+}
+tr {
+    padding: 0px;
+}
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+.box {
+    position: fixed;
+    padding: 0px;
+    margin: 0px;
+    font-size: 0.85em;
+    webkit-box-shadow: 3px 3px 12px #999;
+    moz-box-shadow: 3px 3px 12px #999;
+    box-shadow: 3px 3px 12px #999;
+    resize: both;
+    overflow: auto;
+}
+
+.body {
+
+}
+.header {
+    background-color: #333;
+    padding: 6px;
+    font-size: 0.85em;
+}
+.content {
+    padding: 0px;
+    border: 1px solid #999;
+    background-color: #f9f9f9;
+    overflow: scroll;
+}
+
+.closeme {
+    font-weight: bold;
+    font-size: 1.0em;
+    color: #ccc;
+    text-align: right;
+    float: right;
+    cursor: pointer;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 1.0em;
+    color: #99cc66;
+    text-align: left;
+    float: left;
+}
+
+#tooltip {
+	position: absolute;
+	background-color: #f9f9f9;
+	font-size: 0.80em;
+	padding: 8px;
+	margin: 25px 0px 0px 5px;
+    filter:alpha(opacity=85); /* for dear IE */
+    -moz-opacity:.85;
+    opacity:.85;
+    color:#333;
+    webkit-box-shadow: 3px 3px 12px #999;
+    moz-box-shadow: 3px 3px 12px #999;
+    box-shadow: 3px 3px 12px #999;
+    z-index: 999;
+}
+
+#graph {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+}
+
+.al {
+    font-size: 2.0em;
+    color: #999;
+}
+
+/**
+ * Code highlighting
+ */
+
+.bold {
+    font-weight: bold;
+    color: green;
+}
+.boldg {
+    font-weight: bold;
+    color: #cc6633;
+}
+.text {
+    color: #888;
+}
+.vars {
+    color: #6699cc;
+}
+.comm {
+    color: #ccc;
+}
+.memLine {
+    background-color: #ffcc00;
+}
+.red {
+    color: red;
+    font-weight: bold;
+}
+.secf1 {
+    color: #ff3300;
+    font-weight: bold;
+}
+.secf2 {
+    color: #cc6666;
+    font-weight: bold;
+}
+.secf3 {
+    color: #cc33cc;
+    font-weight: bold;
+}
+.userf {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.mapf {
+    color: #6699ff;
+    text-decoration: underline;
+}
+.num {
+    color: #3333ff;
+}

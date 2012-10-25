@@ -1,0 +1,25 @@
+
+v 0.2       03-12-2011
+ * fixed several memory leaks
+ * fixed extension crash during server restart
+ * fixed bugs when using console
+ * code revision
+ * added eval_unique
+ * added svg-mod.pl, possible to highlight leafs in graph
+ * added eval_hook_len
+ * added catch_len
+
+v 0.1.3     25-06-2011
+ * fixed several bugs
+ * added documentation
+
+v 0.1.2     15-05-2011
+ * function call tree now shows minimised loops
+ * fixed several bugs
+
+v 0.1.1     27-04-2011
+ * added graph for function calls
+ * added evalhook module
+
+v 0.1       26-04-2011
+ * initial release

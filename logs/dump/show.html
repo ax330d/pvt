@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <head>
+        <title>SVG Preview</title>
+        <link rel="stylesheet" type="text/css" href="helpers/index.css" />
+        <script type="text/javascript" src="helpers/index.js"></script>
+    </head>
+    <body onload="startG();">
+        <div id="menu">
+            <p>
+                <a href="" onclick="prevG(); return false;">&larr;</a>&nbsp;
+                <a href="" onclick="nextG(); return false;">&rarr;</a>
+            </p>
+            <br/>
+            
+            <p>
+                <a href="" onclick="modeG('a'); return false;">a</a>&nbsp;
+                <a href="" onclick="modeG('w'); return false;">w</a>
+            </p>
+            <br/>
+
+            <p>
+                <a href="" onclick="scaleP(); return false;" class="sp">+</a>
+                <a href="" onclick="scaleM(); return false;" class="sp">-</a>
+            </p>
+        </div>
+        <div id="run"></div>
+    </body>
+</html>

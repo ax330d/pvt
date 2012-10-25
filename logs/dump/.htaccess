@@ -1,0 +1,19 @@
+<IfModule sapi_apache2.c>
+    php_flag pvt.graph_fold     Off
+    php_flag pvt.count_stat     Off
+    php_flag pvt.trace_func     Off
+    php_flag pvt.dump_ops       Off
+    php_flag pvt.dump_vars      Off
+    php_flag pvt.eval_hook      Off
+    php_flag pvt.catch_marker   Off
+</IfModule>
+
+<IfModule mod_php5.c>
+    php_flag pvt.trace_func     Off
+    php_flag pvt.count_stat     Off
+    php_flag pvt.trace_func     Off
+    php_flag pvt.dump_ops       Off
+    php_flag pvt.dump_vars      Off
+    php_flag pvt.eval_hook      Off
+    php_flag pvt.catch_marker   Off
+</IfModule>

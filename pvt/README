@@ -1,0 +1,49 @@
+PHP Vulnerability Tracer
+------------------------
+
+1. Unpack the tarball: tar -xzf pvt-0.1.x.tgz.  Note that you do
+not need to unpack the tarball inside the PHP source code tree.
+PVT is compiled separately, all by itself, as stated above.
+
+2. cd pvt-0.1.x
+
+3. Run phpize: phpize
+   (or /path/to/phpize if phpize is not in your path).
+
+4. ./configure
+
+5. Run: make
+
+6. cp modules/pvt.so /to/wherever/you/want/it
+
+7. add the following line to php.ini:
+   zend_extension="/wherever/you/put/it/pvt.so"
+
+8. Restart your webserver.
+
+
+USAGE
+-----
+
+PVT consists of 6 parts, modules:
+    1. functions tracer
+    2. opcodes dumper
+    3. variables dumper
+    4. eval hooker
+    5. marker search
+    6. variables tracer (under development)
+
+Each module is possible to enable/disable separately. In PHP configuration file
+path to log files must be defined. For each module following files will be
+created (according to numbers in modules listing):
+    1. dump/*/trace-functions.txt
+    2. dump/*/opcodes/*.html
+    3. dump/*/dump-variables.txt
+    4. dump/*/dump-evaluated.phps
+    5. dump/*/catched-marker.txt
+Provided directory must be writable.
+
+It is possible to override php.ini settings through GET variable, e.g.:
+?_PVT=eval_hook_all=0|eval_marker=545
+
+

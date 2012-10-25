@@ -18,6 +18,7 @@
 
 #include "php_pvt.h"
 #include "pvt_helpers.h"
+#include "pvt_logotype.h"
 
 typedef struct _zfunc_type {
     int type;
@@ -694,10 +695,19 @@ static void pvt_execute_internal(zend_execute_data *execute_data_ptr, int return
  */
 PHP_MINFO_FUNCTION(pvt)
 {
-    php_info_print_table_start();
-    php_info_print_table_header(2, "PHP Vulnerability Tracer", "Enabled");
-    php_info_print_table_row(2, "version", PVT_VERSION);
-    php_info_print_table_end();
+    php_info_print_box_start(0);
+
+    PUTS("<a href=\"http://www.onsec.ru/\"><img style=\"float:left;border:none;\" src=\"data:image/jpeg;base64,");
+    PUTS(logo_b64);
+    PUTS("\" alt=\"ONsec\" /></a>");
+    PUTS("Scripts running with this PHP interpeter are under the watch of PVT.<br/>");
+    PUTS("PVT - PHP Vulnerability Tracer v.");
+    PUTS(PVT_VERSION);
+    PUTS("<br/>Copyright (c) 2011-2012 ONsec.");
+
+    php_info_print_box_end();
+
+    DISPLAY_INI_ENTRIES();
 }
 /* }}} */
 

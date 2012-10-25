@@ -697,7 +697,7 @@ PHP_MINFO_FUNCTION(pvt)
 {
     php_info_print_box_start(0);
 
-    PUTS("<a href=\"http://www.onsec.ru/\"><img style=\"float:left;border:none;\" src=\"data:image/jpeg;base64,");
+    PUTS("<a href=\"http://www.onsec.ru/\"><img style=\"float:right;border:none;\" src=\"data:image/jpeg;base64,");
     PUTS(logo_b64);
     PUTS("\" alt=\"ONsec\" /></a>");
     PUTS("Scripts running with this PHP interpeter are under the watch of PVT.<br/>");

@@ -2,7 +2,7 @@ PHP Vulnerability Tracer
 ------------------------
 
 This extension was developed to assist in PHP web-application security
-evaluation. PVT consists of several separate modules, each of them executing
+evaluation. PVT consists of several separate modules, each of them performing
 different tasks:
     - tracing functions and draw CFG
     - dump opcodes

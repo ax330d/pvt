@@ -116,7 +116,7 @@ extern zend_module_entry pvt_module_entry;
 #endif
 
 #define MICRO_IN_SEC 1000000.00
-#define PVT_VERSION "0.2"
+#define PVT_VERSION "0.3.1"
 #define PVT_EXTNAME "pvt"
 #define PVT_DBG_TIME 0
 
@@ -204,7 +204,7 @@ ZEND_BEGIN_MODULE_GLOBALS(pvt)
 
     zend_bool       pvt_trace_func;
     zend_bool       pvt_dump_ops;
-    
+
     zend_bool       pvt_dump_vars;
     char            *pvt_dump_vars_list;
     zend_bool       pvt_dump_vars_all;
@@ -235,7 +235,7 @@ ZEND_BEGIN_MODULE_GLOBALS(pvt)
     HashTable*  function_summary;
     HashTable*  file_summary;
     HashTable*  block_summary;
-    
+
     int     function_index;
     int     file_index;
     int     block_index;

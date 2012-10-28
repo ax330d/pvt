@@ -574,7 +574,7 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
 
     if (fname) {
         efree(fname);
-
+    }
 }
 
 void trace_function_exit(char *func_name, char *filename, int type, int line)

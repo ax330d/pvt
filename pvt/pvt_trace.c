@@ -216,8 +216,8 @@ void dump_dot(void)
     int x, print_header, key_type;
     int *block_num;
     int c = 0, len = 0, flag_ho;
-    long index, key_len;
-    char *block_name = NULL;
+    unsigned long index, key_len;
+    unsigned char *block_name = NULL;
     char *time_buff = pvt_get_time();
     smart_str str_dot_func = {0};
 
@@ -523,7 +523,6 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
         }
     }
 
-
     /* Save variable and related block node number */
     PVT_G(funcs)->func_id = realloc(PVT_G(funcs)->func_id, (PVT_G(funcs)->len+1) * sizeof(int));
     PVT_G(funcs)->func_id[PVT_G(funcs)->len] = tmp_function_index;
@@ -549,12 +548,12 @@ void trace_function_entry(HashTable *func_table, const char *func_name, int type
     PVT_G(funcs)->is_evil = realloc(PVT_G(funcs)->is_evil, (PVT_G(funcs)->len+1) * sizeof(int));
     PVT_G(funcs)->is_evil[PVT_G(funcs)->len] = is_evil;
 
-    PVT_G(funcs)->file_name = realloc(PVT_G(funcs)->file_name, sizeof(char*) * (PVT_G(funcs)->len+1));
+    PVT_G(funcs)->file_name = realloc(PVT_G(funcs)->file_name, sizeof(unsigned char*) * (PVT_G(funcs)->len+1));
     PVT_G(funcs)->file_name[PVT_G(funcs)->len] = malloc(strlen(filename) + 1);
     memcpy(PVT_G(funcs)->file_name[PVT_G(funcs)->len], filename, strlen(filename) + 1);
     PVT_G(funcs)->file_name[PVT_G(funcs)->len][strlen(filename)] = '\0';
 
-    PVT_G(funcs)->func_name = realloc(PVT_G(funcs)->func_name, sizeof(char*) * (PVT_G(funcs)->len+1));
+    PVT_G(funcs)->func_name = realloc(PVT_G(funcs)->func_name, sizeof(unsigned char*) * (PVT_G(funcs)->len+1));
     PVT_G(funcs)->func_name[PVT_G(funcs)->len] = malloc(strlen(fname) + 1);
     memcpy(PVT_G(funcs)->func_name[PVT_G(funcs)->len], fname, strlen(fname) + 1);
     PVT_G(funcs)->func_name[PVT_G(funcs)->len][strlen(fname)] = '\0';

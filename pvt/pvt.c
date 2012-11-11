@@ -352,7 +352,7 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
             PVT_G(evalued)->lineno = realloc(PVT_G(evalued)->lineno, (PVT_G(evalued)->len+1) * sizeof(int));
             PVT_G(evalued)->lineno[PVT_G(evalued)->len] = found_pos;
 
-            PVT_G(evalued)->filename = realloc(PVT_G(evalued)->filename, sizeof(char*) * (PVT_G(evalued)->len+1));
+            PVT_G(evalued)->filename = realloc(PVT_G(evalued)->filename, sizeof(unsigned char*) * (PVT_G(evalued)->len+1));
             PVT_G(evalued)->filename[PVT_G(evalued)->len] = emalloc(strlen(filename) + 1);
             memcpy(PVT_G(evalued)->filename[PVT_G(evalued)->len], filename, strlen(filename) + 1);
             PVT_G(evalued)->filename[PVT_G(evalued)->len][strlen(filename)] = '\0';

@@ -171,15 +171,15 @@ typedef struct dot_funcs {
     int *hide;
     int *is_dyn;
     int *is_evil;
-    char **file_name;
-    char **func_name;
+    unsigned char **file_name;
+    unsigned char **func_name;
 } dot_funcs;
 
 typedef struct eval_db {
     int len;
     int *strlen;
     int *lineno;
-    char **filename;
+    unsigned char **filename;
 } eval_db;
 
 typedef struct stats_db {

@@ -284,7 +284,7 @@ static zend_op_array *evalhook_compile_string(zval *source_string, char *filenam
     len = Z_STRLEN_P(source_string);
     copy = estrndup(Z_STRVAL_P(source_string), len);
     if (len > strlen(copy)) {
-        for (c=0; c<len; c++) if (copy[c] == 0) copy[c] == '?';
+        for (c=0; c<len; c++) if (copy[c] == 0) copy[c] = '?';
     }
 
     unsigned int marker_len  = strlen(PVT_G(pvt_eval_marker));

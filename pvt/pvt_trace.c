@@ -173,15 +173,15 @@ static void hide_functions(void)
             {
 
                 int dist = k - i;
-                int g = i;
-
+                int g;
+                g = i;
                 /* This is a temporary rude hack, rarely but it tends to loop.
                  * Thus, I limit maximal amount of functions in block to 29.
                  */
                 if (dist > 30) continue;
 
                 /* Drop to the very first block */
-                for (g; g < PVT_G(funcs)->len; ) {
+                for (g = i; g < PVT_G(funcs)->len; ) {
                     int e, m = 0;
 
                     /* Start cycling by blocks */

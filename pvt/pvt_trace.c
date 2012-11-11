@@ -155,8 +155,7 @@ static void hide_functions(void)
 {
     TSRMLS_FETCH();
 
-    int k, i = 0;
-
+    int k;
     for (k = 0; k < PVT_G(funcs)->len; k++) {
 
         int index   = PVT_G(funcs)->func_id[k];
@@ -164,8 +163,8 @@ static void hide_functions(void)
 
         if (0 == k || k == PVT_G(funcs)->len) continue;
 
-        int i = k - 1;
-        for (i; i > 0; i--) {
+        int i;
+        for (i = k - 1; i > 0; i--) {
 
             /* If there is a match with some previous item */
             if (PVT_G(funcs)->func_id[i] == index

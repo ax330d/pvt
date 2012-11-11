@@ -268,7 +268,7 @@ void dump_dot(void)
                             NULL, 0, &ret, &ret_len TSRMLS_CC
                         );
                         char *escaped_str = php_escape_html_entities(
-                            block_name,
+                            (unsigned char*) block_name,
                             strlen(block_name),
                             &len, 0, ENT_QUOTES, NULL TSRMLS_CC
                         );

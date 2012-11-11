@@ -252,8 +252,6 @@ void *format_zval(zval *z, zend_bool raw)
         default:
             return pvt_sprintf("%s", "Unknown");
     }
-
-    return;
 }
 /* {{{ */
 

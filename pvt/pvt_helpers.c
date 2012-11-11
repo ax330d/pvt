@@ -255,7 +255,7 @@ char *str_repeat(const char *input_str, int len)
     return result;
 }
 
-void *pvt_normalize_str(char *input_str)
+void pvt_normalize_str(char *input_str)
 {
     static char from[] = " \n\r";
     php_strtr(input_str, strlen(input_str), from, "_", strlen(input_str));

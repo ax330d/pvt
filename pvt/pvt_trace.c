@@ -155,9 +155,9 @@ static void hide_functions(void)
 {
     TSRMLS_FETCH();
 
-    int k = 0, i = 0;
+    int k, i = 0;
 
-    for (k; k < PVT_G(funcs)->len; k++) {
+    for (k = 0; k < PVT_G(funcs)->len; k++) {
 
         int index   = PVT_G(funcs)->func_id[k];
         int file_id = PVT_G(funcs)->file_id[k];
@@ -182,10 +182,10 @@ static void hide_functions(void)
 
                 /* Drop to the very first block */
                 for (g; g < PVT_G(funcs)->len; ) {
-                    int e = 0, m = 0;
+                    int e, m = 0;
 
                     /* Start cycling by blocks */
-                    for (e; e < dist; e++) {
+                    for (e = 0; e < dist; e++) {
                         if ((g + dist + e) >= PVT_G(funcs)->len) {
                             break;
                         }
@@ -196,8 +196,8 @@ static void hide_functions(void)
 
                     if (m == dist) {
                         g += dist;
-                        int q = 0;
-                        for (q; q < dist; q++) {
+                        int q;
+                        for (q = 0; q < dist; q++) {
                             PVT_G(funcs)->hide[q + g] = 1;
                         }
                         k = g + dist - 1;

@@ -57,7 +57,6 @@ extern zend_module_entry pvt_module_entry;
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <malloc.h>
 
 
 #if !defined(ZEND_ENGINE_2_1) && (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 1 || PHP_MAJOR_VERSION > 5)

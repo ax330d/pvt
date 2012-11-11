@@ -217,7 +217,7 @@ void dump_dot(void)
     int *block_num;
     int c = 0, len = 0, flag_ho;
     unsigned long index, key_len;
-    unsigned char *block_name = NULL;
+    char *block_name = NULL;
     char *time_buff = pvt_get_time();
     smart_str str_dot_func = {0};
 
